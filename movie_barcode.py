@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import sys
 
+import optparse
+
 
 def compute_barcode(input_file, output_file, barcode_height, frame_skip, save_to_output_file):
     vidcap = cv2.VideoCapture(input_file)
@@ -31,14 +33,19 @@ def compute_barcode(input_file, output_file, barcode_height, frame_skip, save_to
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-if __name__ == '__main__':
-    if len(sys.argv) <= 1:
-        print "Usage: python movie_barcode.py <video_file_name>"
-    else:
-        input_file = sys.argv[1]
-        save_to_output_file = False
-        output_file = "movie_barcode.jpg"
-        barcode_height = 50
-        frame_skip = 10  # Set higher number for longer videos
+def run():
+    # "Usage: python movie_barcode.py <video_file_name>"
+    parser = optparse.OptionParser()
+    parser.add_option('-s', '--source', help='source video')
+    parser.add_option('-o', '--output', help='output barcode image')
+    parser.add_option('-h', '--height', help='output height; proportional to width if not present (default: match source height)')
+    parser.add_option('-w', '--width', help='output width; proportional to height if not present (default: match source width)')
+    parser.add_option('-f', '--frameskip', default=10, help='frames to skip when creating the barcode')
+    parser.add_option('-v', '--verbose', default=False, action='store_true', help='be verbose')
+    options, args = parser.parse_args()
+    
+    height, width = compute_dimensions(options.source, options.height, options.width, options.frameskip)
+    compute_barcode(options.source, options.output, barcode_height, options.frame_skip, save_to_output_file)
 
-        compute_barcode(input_file, output_file, barcode_height, frame_skip, save_to_output_file)
+if __name__ == '__main__':
+    sys.exit(run())
