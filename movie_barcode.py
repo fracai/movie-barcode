@@ -5,9 +5,7 @@ import sys
 import optparse
 
 
-def compute_barcode(input_file, output_file, barcode_height, frame_skip, save_to_output_file):
-    vidcap = cv2.VideoCapture(input_file)
-
+def compute_barcode(input_file, vidcap, output_file, height, width, frame_skip, save_to_output_file):
     print "Processing video file %s. This may take a while depending on the size of the video or the system performance..." % (input_file)
 
     frame_count = 0
@@ -18,12 +16,13 @@ def compute_barcode(input_file, output_file, barcode_height, frame_skip, save_to
         success, image = vidcap.read()
         if frame_count % frame_skip == 0:
             if success:
-                resized_image = cv2.resize(image, (1, 600))
+                resized_image = cv2.resize(image, (1, height))
             if barcode is None:
                 barcode = resized_image
             else:
                 barcode = np.hstack((barcode, resized_image))
         frame_count += 1
+    barcode = cv2.resize(barcode, (width, height))
 
     if save_to_output_file:
         cv2.imwrite(output_file, barcode)
@@ -66,7 +65,7 @@ def run():
     
     vidcap = cv2.VideoCapture(options.source)
     height, width = compute_dimensions(vidcap, options.height, options.width, options.frameskip, options.frameswidth)
-    compute_barcode(options.source, options.output, barcode_height, options.frame_skip, save_to_output_file)
+    compute_barcode(options.source, vidcap, options.output, height, width, options.frame_skip, save_to_output_file)
 
 if __name__ == '__main__':
     sys.exit(run())
