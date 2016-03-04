@@ -5,12 +5,18 @@ import sys
 import optparse
 
 
-def compute_barcode(input_file, vidcap, output_file, height, width, frame_skip, save_to_output_file):
+def compute_barcode(input_file, vidcap, output_file, height, width, frame_skip):
     print "Processing video file %s. This may take a while depending on the size of the video or the system performance..." % (input_file)
 
     frame_count = 0
     success = True
     barcode = None
+    
+    if not output_file:
+        output_file = '/tmp/tmp.png'
+        save_to_output_file = False
+    else:
+        save_to_output_file = True
 
     while success:
         success, image = vidcap.read()
@@ -65,7 +71,7 @@ def run():
     
     vidcap = cv2.VideoCapture(options.source)
     height, width = compute_dimensions(vidcap, options.height, options.width, options.frameskip, options.frameswidth)
-    compute_barcode(options.source, vidcap, options.output, height, width, options.frame_skip, save_to_output_file)
+    compute_barcode(options.source, vidcap, options.output, height, width, options.frame_skip)
 
 if __name__ == '__main__':
     sys.exit(run())
