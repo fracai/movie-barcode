@@ -1,8 +1,19 @@
 import optparse
 import sys
+from distutils.version import StrictVersion
 
 import numpy as np
 import cv2
+from cv2 import __version__ as cv2version
+
+if StrictVersion('3') >= StrictVersion(cv2version):
+    FRAME_COUNT = cv2.CAP_PROP_FRAME_COUNT
+    FRAME_HEIGHT = cv2.CAP_PROP_FRAME_HEIGHT
+    FRAME_WIDTH = cv2.CAP_PROP_FRAME_WIDTH
+else:
+    FRAME_COUNT = cv2.cv.CV_CAP_PROP_FRAME_COUNT
+    FRAME_HEIGHT = cv2.cv.CV_CAP_PROP_FRAME_HEIGHT
+    FRAME_WIDTH = cv2.cv.CV_CAP_PROP_FRAME_WIDTH
 
 
 def compute_barcode(input_file, vidcap, output_file, height, width, frame_skip):
