@@ -36,13 +36,15 @@ def compute_barcode(input_file, vidcap, output_file, height, width, frame_skip):
             resized_image = None
             if success:
                 resized_image = cv2.resize(image, (1, height))
-            if not resized_image:
+            if resized_image is None:
                 print "skipping frame: %i" % (frame_count)
                 continue
             if barcode is None:
                 barcode = resized_image
             else:
                 barcode = np.hstack((barcode, resized_image))
+        else:
+            print "failed"
         frame_count += 1
     barcode = cv2.resize(barcode, (width, height))
 
