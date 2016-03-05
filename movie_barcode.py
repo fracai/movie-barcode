@@ -42,17 +42,17 @@ def compute_barcode(input_file, vidcap, output_file, height, width, frame_skip):
 
 def compute_dimensions(vidcap, height, width, frameskip, frameswidth):
     if 0 == height and 0 == width:
-        height = vidcap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
-        width = vidcap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
+        height = vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        width = vidcap.get(cv2.CAP_PROP_FRAME_WIDTH)
         return height, width
     if 0 != height and 0 != width:
         return height, width
     if 0 != height and 0 == width and frameswidth:
-        video_frame_count = vidcap.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT)
+        video_frame_count = vidcap.get(cv2.CAP_PROP_FRAME_COUNT)
         width = video_frame_count / frameskip
         return height, width
-    video_height = vidcap.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
-    video_width = vidcap.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
+    video_height = vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    video_width = vidcap.get(cv2.CAP_PROP_FRAME_WIDTH)
     aspect = video_width / video_height
     if 0 != height and 0 == width:
         return height, height * aspect
@@ -62,21 +62,22 @@ def compute_dimensions(vidcap, height, width, frameskip, frameswidth):
 
 def run():
     # "Usage: python movie_barcode.py <video_file_name>"
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(description=__doc__, usage='%prog [options]')
     parser.add_option('-s', '--source', help='source video')
     parser.add_option('-o', '--output', help='output barcode image')
-    parser.add_option('-h', '--height', default=0,
+    parser.add_option('--height', default=0,
                       help='output height; proportional to width and original aspect if not present (default: match source height)')
-    parser.add_option('-w', '--width', default=0,
+    parser.add_option('--width', default=0,
                       help='output width; proportional to height and original aspect if not present (default: match source width)')
-    parser.add_option('-f', '--frameswidth', default=False, action='store_true', help='set output width by frame count')
-    parser.add_option('-f', '--frameskip', default=10, help='frames to skip when creating the barcode')
+    parser.add_option('--frameswidth', default=False, action='store_true', help='set output width by frame count')
+    parser.add_option('-f', '--frameskip', default=1, help='frames to skip when creating the barcode')
     parser.add_option('-v', '--verbose', default=False, action='store_true', help='be verbose')
     options, args = parser.parse_args()
 
     vidcap = cv2.VideoCapture(options.source)
     height, width = compute_dimensions(vidcap, options.height, options.width, options.frameskip, options.frameswidth)
-    compute_barcode(options.source, vidcap, options.output, height, width, options.frame_skip)
+    height, width = int(height), int(width)
+    compute_barcode(options.source, vidcap, options.output, height, width, options.frameskip)
 
 
 if __name__ == '__main__':
