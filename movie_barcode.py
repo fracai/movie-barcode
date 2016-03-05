@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 from cv2 import __version__ as cv2version
 
-if StrictVersion('3') >= StrictVersion(cv2version):
+if StrictVersion('3.0') <= StrictVersion(cv2version):
     FRAME_COUNT = cv2.CAP_PROP_FRAME_COUNT
     FRAME_HEIGHT = cv2.CAP_PROP_FRAME_HEIGHT
     FRAME_WIDTH = cv2.CAP_PROP_FRAME_WIDTH
@@ -25,7 +25,7 @@ def compute_barcode(input_file, vidcap, output_file, height, width, frame_skip):
     barcode = None
 
     if not output_file:
-        output_file = '/tmp/tmp.png'
+        output_file = 'tmp.png'
         save_to_output_file = False
     else:
         save_to_output_file = True
@@ -52,18 +52,23 @@ def compute_barcode(input_file, vidcap, output_file, height, width, frame_skip):
 
 
 def compute_dimensions(vidcap, height, width, frameskip, frameswidth):
+    if 0 == height and 0 == width and frameswidth:
+        height = vidcap.get(FRAME_HEIGHT)
+        video_frame_count = vidcap.get(FRAME_COUNT)
+        width = video_frame_count / frameskip
+        return height, width
     if 0 == height and 0 == width:
-        height = vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        width = vidcap.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = vidcap.get(FRAME_HEIGHT)
+        width = vidcap.get(FRAME_WIDTH)
         return height, width
     if 0 != height and 0 != width:
         return height, width
     if 0 != height and 0 == width and frameswidth:
-        video_frame_count = vidcap.get(cv2.CAP_PROP_FRAME_COUNT)
+        video_frame_count = vidcap.get(FRAME_COUNT)
         width = video_frame_count / frameskip
         return height, width
-    video_height = vidcap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-    video_width = vidcap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    video_height = vidcap.get(FRAME_HEIGHT)
+    video_width = vidcap.get(FRAME_WIDTH)
     aspect = video_width / video_height
     if 0 != height and 0 == width:
         return height, height * aspect
