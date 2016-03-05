@@ -1,8 +1,8 @@
 import optparse
 import sys
 
-import cv2
 import numpy as np
+import cv2
 
 
 def compute_barcode(input_file, vidcap, output_file, height, width, frame_skip):
