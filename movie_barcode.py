@@ -97,7 +97,7 @@ def run():
     options, args = parser.parse_args()
 
     vidcap = cv2.VideoCapture(options.source)
-    if not vidcap or vidcap.isOpened():
+    if not vidcap or not vidcap.isOpened():
         print "failed to open file: " + options.source
         sys.exit(-1)
     height, width = compute_dimensions(vidcap, options.height, options.width, options.frameskip, options.frameswidth)
