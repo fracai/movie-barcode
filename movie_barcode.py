@@ -37,7 +37,7 @@ def compute_barcode(input_file, vidcap, output_file, height, width, frame_skip):
             if success:
                 resized_image = cv2.resize(image, (1, height))
             if not resized_image:
-                print 'skipping frame: ' + frame_count
+                print "skipping frame: %i" % (frame_count)
                 continue
             if barcode is None:
                 barcode = resized_image
