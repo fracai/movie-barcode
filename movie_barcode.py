@@ -97,6 +97,9 @@ def run():
     options, args = parser.parse_args()
 
     vidcap = cv2.VideoCapture(options.source)
+    if not vidcap or vidcap.isOpened():
+        print "failed to open file: " + options.source
+        sys.exit(-1)
     height, width = compute_dimensions(vidcap, options.height, options.width, options.frameskip, options.frameswidth)
     height, width = int(height), int(width)
     compute_barcode(options.source, vidcap, options.output, height, width, options.frameskip)
